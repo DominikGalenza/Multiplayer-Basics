@@ -5,15 +5,14 @@ using UnityEngine;
 
 public class MyNetworkManager : NetworkManager
 {
-    public override void OnClientConnect()
-    {
-        base.OnClientConnect();
-        Debug.Log("Connected");
-    }
-
     public override void OnServerAddPlayer(NetworkConnection conn)
     {
         base.OnServerAddPlayer(conn);
-        Debug.Log($"{numPlayers} Players");
+
+        MyNetworkPlayer player = conn.identity.GetComponent<MyNetworkPlayer>();
+
+        player.SetDisplayName($"Player {numPlayers}");
+
+        player.SetDisplayColour(new Color(Random.value, Random.value, Random.value));
     }
 }
