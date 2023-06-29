@@ -17,7 +17,9 @@ public class MyNetworkPlayer : NetworkBehaviour
     [SerializeField]
     private Color displayColour = Color.black;
 
-    [Server]
+	#region Server
+
+	[Server]
     public void SetDisplayName(string newDisplayName)
     {
         displayName = newDisplayName;
@@ -29,7 +31,20 @@ public class MyNetworkPlayer : NetworkBehaviour
         displayColour = newDisplayColour;
     }
 
-    private void HandleDisplayColourUpdated(Color oldColour, Color newColour)
+    [Command]
+    private void CmdSetDisplayName(string newDisplayName)
+    {
+        RpcLogNewName(newDisplayName);
+        SetDisplayName(newDisplayName);
+    }
+
+    
+
+	#endregion
+
+	#region Client
+
+	private void HandleDisplayColourUpdated(Color oldColour, Color newColour)
     {
         displayColourRenderer.material.SetColor("_BaseColor", newColour);
     }
@@ -38,4 +53,18 @@ public class MyNetworkPlayer : NetworkBehaviour
     {
         displayNameText.text = newName;
     }
+
+    [ContextMenu("Set My Name")]
+    private void SetMyName()
+    {
+        CmdSetDisplayName("My New Name");
+    }
+
+	[ClientRpc]
+	private void RpcLogNewName(string newDisplayName)
+	{
+		Debug.Log(displayName);
+	}
+
+	#endregion
 }
